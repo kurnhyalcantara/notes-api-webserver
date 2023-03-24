@@ -63,7 +63,7 @@ class NotesService {
 
   async deleteNoteById(id) {
     const query = {
-      text: 'DELETE FROM karyawan WHERE id = $1',
+      text: 'DELETE FROM notes WHERE id = $1',
       values: [id],
     };
     const result = await this._pool.query(query);
