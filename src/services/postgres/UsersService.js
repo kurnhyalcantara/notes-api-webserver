@@ -20,7 +20,7 @@ class UsersService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const query = {
-      text: 'INSERT INTO notes VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
+      text: 'INSERT INTO users VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
       values: [id, username, hashedPassword, fullname, createdAt, updatedAt],
     };
 
@@ -56,6 +56,8 @@ class UsersService {
     if (!result.rows.length) {
       throw new NotFoundError('User tidak ditemukan');
     }
+
+    return result.rows[0];
   }
 }
 
