@@ -19,14 +19,46 @@ class AuthenticationsHandler {
 
     await this._authenticationsService.addRefreshToken(refreshToken);
 
-    return h.response({
+    return h
+      .response({
+        status: 'success',
+        message: 'Authentication berhasil ditambahkan',
+        data: {
+          accessToken,
+          refreshToken,
+        },
+      })
+      .code(201);
+  }
+
+  async putAuthenticationHandler(req) {
+    this._validator.validatePutAuthenticationPayload(req.payload);
+    const { refreshToken } = req.payload;
+
+    await this._authenticationsService.verifyRefreshToken(refreshToken);
+    const { id } = await this._tokenManager.verifyRefreshToken(refreshToken);
+
+    const accessToken = await this._tokenManager.generateAccessToken({ id });
+    return {
       status: 'success',
-      message: 'Authentication berhasil ditambahkan',
+      message: 'Access Token berhasil diperbarui',
       data: {
         accessToken,
-        refreshToken,
       },
-    });
+    };
+  }
+
+  async deleteAuthenticationHandler(req) {
+    this._validator.validateDeleteAuthenticationPayload(req.payload);
+    const { refreshToken } = req.payload;
+
+    await this._authenticationsService.verifyRefreshToken(refreshToken);
+    await this._authenticationsService.deleteRefreshToken(refreshToken);
+
+    return {
+      status: 'success',
+      message: 'Refresh token berhasil dihapus',
+    };
   }
 }
 
