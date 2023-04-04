@@ -2,7 +2,7 @@ const routes = (handler) => [
   {
     method: 'POST',
     path: '/notes',
-    handler: handler.postNoteHandler,
+    handler: (request, h) => handler.postNoteHandler(request, h),
     options: {
       auth: 'notesapp_jwt',
     },
@@ -10,7 +10,7 @@ const routes = (handler) => [
   {
     method: 'GET',
     path: '/notes',
-    handler: handler.getNotesHandler,
+    handler: (request) => handler.getNotesHandler(request),
     options: {
       auth: 'notesapp_jwt',
     },
@@ -18,7 +18,7 @@ const routes = (handler) => [
   {
     method: 'GET',
     path: '/notes/{id}',
-    handler: handler.getNoteByIdHandler,
+    handler: (request) => handler.getNoteByIdHandler(request),
     options: {
       auth: 'notesapp_jwt',
     },
@@ -26,7 +26,7 @@ const routes = (handler) => [
   {
     method: 'PUT',
     path: '/notes/{id}',
-    handler: handler.putNoteByIdHandler,
+    handler: (request) => handler.putNoteByIdHandler(request),
     options: {
       auth: 'notesapp_jwt',
     },
@@ -34,7 +34,7 @@ const routes = (handler) => [
   {
     method: 'DELETE',
     path: '/notes/{id}',
-    handler: handler.deleteNoteByIdHandler,
+    handler: (request) => handler.deleteNoteByIdHandler(request),
     options: {
       auth: 'notesapp_jwt',
     },
