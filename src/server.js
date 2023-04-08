@@ -3,14 +3,17 @@ require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
 const authentications = require('./api/authentications');
+const collaborations = require('./api/collaborations');
 const notes = require('./api/notes');
 const users = require('./api/users');
 const ClientError = require('./exceptions/ClientError');
 const AuthenticationsService = require('./services/postgres/AuthenticationsService');
+const CollaborationsService = require('./services/postgres/CollaborationsService');
 const NotesService = require('./services/postgres/NotesService');
 const UsersService = require('./services/postgres/UsersService');
 const TokenManager = require('./tokenize/TokenManager');
 const AuthenticationValidator = require('./validator/authentications');
+const CollaborationsValidator = require('./validator/collaborations');
 const NotesValidator = require('./validator/notes');
 const UserValidator = require('./validator/users');
 
@@ -45,7 +48,11 @@ const init = async () => {
     }),
   });
 
-  const notesService = new NotesService();
+  const collaborationsService = new CollaborationsService();
+  const notesService = new NotesService(collaborationsService);
+  const usersService = new UsersService();
+  const authenticationsService = new AuthenticationsService();
+
   await server.register({
     plugin: notes,
     options: {
@@ -54,7 +61,6 @@ const init = async () => {
     },
   });
 
-  const usersService = new UsersService();
   await server.register({
     plugin: users,
     options: {
@@ -63,7 +69,6 @@ const init = async () => {
     },
   });
 
-  const authenticationsService = new AuthenticationsService();
   await server.register({
     plugin: authentications,
     options: {
@@ -71,6 +76,15 @@ const init = async () => {
       usersService,
       tokenManager: TokenManager,
       validator: AuthenticationValidator,
+    },
+  });
+
+  await server.register({
+    plugin: collaborations,
+    options: {
+      collaborationsService,
+      notesService,
+      validator: CollaborationsValidator,
     },
   });
 
